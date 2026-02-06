@@ -1,0 +1,13 @@
+.elementor-kit-5{--e-global-color-primary:#FFFFFF;--e-global-color-secondary:#FFFFFF;--e-global-color-text:#FFFFFF;--e-global-color-accent:#FFFFFF;--e-global-color-c23caff:#AE4BFF;--e-global-color-693dfce:#34005F;--e-global-color-387921d:#A1A1A1;--e-global-color-f2edff6:#000000;--e-global-color-3df980b:#FFFFFF;--e-global-typography-primary-font-family:"Montserrat";--e-global-typography-primary-font-size:42px;--e-global-typography-primary-font-weight:900;--e-global-typography-secondary-font-family:"Montserrat";--e-global-typography-secondary-font-size:16px;--e-global-typography-secondary-font-weight:300;--e-global-typography-text-font-family:"Roboto";--e-global-typography-text-font-weight:400;--e-global-typography-accent-font-family:"Roboto";--e-global-typography-accent-font-weight:500;}.elementor-kit-5 e-page-transition{background-color:#000000;}.elementor-section.elementor-section-boxed > .elementor-container{max-width:1140px;}.e-con{--container-max-width:1140px;}.elementor-widget:not(:last-child){margin-block-end:20px;}.elementor-element{--widgets-spacing:20px 20px;--widgets-spacing-row:20px;--widgets-spacing-column:20px;}{}h1.entry-title{display:var(--page-title-display);}.site-header .site-branding{flex-direction:column;align-items:stretch;}.site-header{padding-inline-end:0px;padding-inline-start:0px;}.site-footer .site-branding{flex-direction:column;align-items:stretch;}@media(max-width:1024px){.elementor-section.elementor-section-boxed > .elementor-container{max-width:1024px;}.e-con{--container-max-width:1024px;}}@media(max-width:767px){.elementor-section.elementor-section-boxed > .elementor-container{max-width:767px;}.e-con{--container-max-width:767px;}}/* Start Custom Fonts CSS */@font-face {
+	font-family: 'Montserrat';
+	font-style: normal;
+	font-weight: 400;
+	font-display: auto;
+	src: url('../fonts/Montserrat-Regular.eot');
+	src: url('../fonts/Montserrat-Regular.eot#iefix') format('embedded-opentype'),
+		url('../fonts/Montserrat-Regular.woff2') format('woff2'),
+		url('../fonts/Montserrat-Regular.woff') format('woff'),
+		url('../fonts/Montserrat-Regular.ttf') format('truetype'),
+		url('../images/Montserrat-Regular.svg#Montserrat') format('svg');
+}
+/* End Custom Fonts CSS */
