@@ -3,16 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Afroworld</title>
+    <title>Protocolo Afroworld</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* --- ESTILOS GERAIS (Baseado na paleta escura e vermelha dos prints) --- */
         :root {
-            --bg-color: #0a0a0a; /* Fundo escuro */
-            --card-bg: #141414; /* Fundo dos cartões um pouco mais claro */
-            --accent-color: #e50914; /* Vermelho vibrante dos botões */
+            --bg-color: #0a0a0a;
+            --card-bg: #141414;
+            --accent-color: #e50914;
             --text-color: #ffffff;
-            --glow-color: rgba(229, 9, 20, 0.3); /* Brilho vermelho sutil */
+            --glow-color: rgba(229, 9, 20, 0.3);
+            --progress-bg: #333;
+            --progress-fill: #e50914;
         }
 
         body {
@@ -25,62 +26,90 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background-image: radial-gradient(circle at center, #1a0a0a 0%, #000000 100%); /* Sutil gradiente de fundo */
+            background-image: radial-gradient(circle at center, #1a0a0a 0%, #000000 100%);
         }
 
-        /* Container principal do quiz */
+        /* Barra de Progresso no topo */
+        .header-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background-color: var(--progress-bg);
+            z-index: 100;
+        }
+
+        #main-progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: var(--progress-fill);
+            box-shadow: 0 0 10px var(--accent-color);
+            transition: width 0.4s ease;
+        }
+
         .quiz-container {
             width: 90%;
             max-width: 500px;
             background-color: var(--card-bg);
             padding: 30px 20px;
             border-radius: 20px;
-            box-shadow: 0 0 20px var(--glow-color); /* Brilho sutil ao redor do card */
+            box-shadow: 0 0 25px var(--glow-color);
             border: 1px solid #2a2a2a;
             text-align: center;
+            position: relative;
         }
 
-        /* Estilos de texto */
         h1 {
             font-weight: 800;
-            font-size: 24px;
+            font-size: 22px;
             margin-bottom: 25px;
             text-transform: uppercase;
             line-height: 1.3;
         }
-        
-        h2 {
-             font-weight: 700;
-             font-size: 20px;
-             margin-bottom: 15px;
-             color: var(--accent-color);
-        }
 
-        p.subtitle {
-            font-size: 16px;
-            color: #cccccc;
-            margin-bottom: 30px;
-            line-height: 1.5;
-        }
+        .highlight { color: var(--accent-color); }
 
-        /* Estilos para as imagens placeholder */
-        .quiz-image {
+        /* Correção do Enquadramento da Imagem */
+        .image-container {
             width: 100%;
-            max-height: 300px;
-            object-fit: cover;
+            height: 250px;
+            background-color: #000;
             border-radius: 15px;
             margin-bottom: 25px;
-            border: 2px solid #333;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            overflow: hidden;
+            border: 1px solid #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        /* Botões estilo "Desenrolado" */
+        .quiz-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain; /* Enquadra sem cortar */
+        }
+
+        /* Inputs e Botões */
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            border: 1px solid #444;
+            background: #1a1a1a;
+            color: white;
+            font-size: 18px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
         .btn {
             display: block;
             width: 100%;
-            padding: 15px;
-            margin: 10px 0;
-            font-size: 18px;
+            padding: 18px;
+            margin: 12px 0;
+            font-size: 16px;
             font-weight: 700;
             text-transform: uppercase;
             color: white;
@@ -88,166 +117,189 @@
             border: none;
             border-radius: 50px;
             cursor: pointer;
-            transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s;
-            text-decoration: none; /* Para o botão que vira link */
+            transition: 0.3s;
         }
 
         .btn:hover {
-            background-color: #ff1f2a;
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(229, 9, 20, 0.5);
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(229, 9, 20, 0.4);
         }
 
         .btn-outline {
             background-color: transparent;
             border: 2px solid var(--accent-color);
         }
-        .btn-outline:hover {
-             background-color: var(--accent-color);
-        }
 
-        /* --- Tela de Carregamento (Barra de Progresso) --- */
-        .progress-container {
-            margin-top: 30px;
-        }
-        .progress-bar-bg {
-            background-color: #333;
-            border-radius: 50px;
-            height: 15px;
-            width: 100%;
-            overflow: hidden;
-            margin-top: 10px;
-        }
-        .progress-bar-fill {
-            background-color: #4ade80; /* Verde similar ao do print */
-            height: 100%;
-            width: 0%; /* Começa em 0 */
-            border-radius: 50px;
-            transition: width 3s ease-in-out; /* Animação de 3 segundos */
-        }
-        .loading-text {
-            font-weight: 600;
-            font-size: 18px;
-        }
-
-        /* --- Ocultar seções que não são a atual --- */
-        .step {
-            display: none;
-            animation: fadeIn 0.5s ease-in-out;
-        }
-        .step.active {
-            display: block;
-        }
+        .step { display: none; animation: fadeIn 0.4s ease; }
+        .step.active { display: block; }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        /* Tela de Carregamento */
+        .loader-bar {
+            width: 100%;
+            height: 10px;
+            background: #333;
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        .loader-fill {
+            height: 100%;
+            width: 0;
+            background: #4ade80;
+            transition: width 3s linear;
+        }
     </style>
 </head>
 <body>
 
+<div class="header-progress"><div id="main-progress-bar"></div></div>
+
 <div class="quiz-container">
     
     <div class="step active" id="step1">
-        <h1>Você é?</h1>
-        <button class="btn btn-outline" onclick="nextStep(1)">Homem</button>
-        <button class="btn btn-outline" onclick="nextStep(1)">Mulher</button>
+        <h1>VOCÊ É?</h1>
+        <button class="btn" onclick="nextStep(1)">HOMEM</button>
+        <button class="btn btn-outline" onclick="alert('Este protocolo é exclusivo para o público masculino no momento.')">MULHER</button>
     </div>
 
     <div class="step" id="step2">
-        <img src="https://lp.desenrolado.com.br/wp-content/uploads/2025/01/cvs-nova1.webp" alt="Print de conversa vazia" class="quiz-image">
-        
-        <h1>Você também sente dificuldade em manter um assunto interessante e deixar a mulher interessada?</h1>
-        <button class="btn" onclick="nextStep(2)">SIM</button>
-        <button class="btn btn-outline" onclick="nextStep(2)">NÃO</button>
+        <h1>QUAL O SEU <span class="highlight">NOME?</span></h1>
+        <input type="text" id="userName" placeholder="Seu nome aqui...">
+        <button class="btn" onclick="saveName()">AVANÇAR</button>
     </div>
 
     <div class="step" id="step3">
-        <img src="https://lp.desenrolado.com.br/wp-content/uploads/2025/01/cvs-nova2.webp" alt="Pessoa no celular sorrindo" class="quiz-image">
-
-        <h1>Olhe pra essas mensagens… pois é, pode ser você!
-Você não precisa de muito pra deixar a mina molhada assim só na conversa! O que te impede de começar a ser assim?</h1>
-        <button class="btn" onclick="startLoading()">QUERO SER ASSIM</button>
+        <h1>QUAL A SUA <span class="highlight">IDADE?</span></h1>
+        <input type="number" id="userAge" placeholder="Sua idade...">
+        <button class="btn" onclick="nextStep(3)">AVANÇAR</button>
     </div>
 
     <div class="step" id="step4">
-        <img src="https://images.unsplash.com/photo-1516575150286-877c14bb48c0?q=80&w=500&auto=format&fit=crop" alt="Pessoa no celular sorrindo" class="quiz-image">
-
-        <h1>Você deseja aprender a dominar essa arte de conversar e deixar aquela 10/10 excitada só nas mensagens?</h1>
-        <button class="btn" onclick="startLoading()">SIM, EU QUERO</button>
-        <button class="btn btn-outline" onclick="startLoading()">NÃO</button>
-    </div>
-
-    <div class="step" id="step4-loading">
-        <p class="loading-text">Avaliando suas respostas...</p>
-        <div class="progress-container">
-            <div class="progress-bar-bg">
-                <div class="progress-bar-fill" id="progressBar"></div>
-            </div>
+        <div class="image-container">
+            <img src="https://lp.desenrolado.com.br/wp-content/uploads/2025/01/cvs-nova1.webp" class="quiz-image">
         </div>
-         <p style="margin-top: 15px; font-size: 14px; color: #999;">Gerando seu perfil Afroworld...</p>
+        <h1><span class="user-name-span"></span>, VOCÊ SENTE QUE AS MULHERES PERDEM O INTERESSE RÁPIDO NO WHATSAPP?</h1>
+        <button class="btn" onclick="nextStep(4)">SIM, O TEMPO TODO</button>
+        <button class="btn btn-outline" onclick="nextStep(4)">ÀS VEZES</button>
     </div>
 
-    <div class="step" id="step5-result">
-        <h2>SEU RESULTADO:</h2>
-        <h1 style="color: var(--accent-color); font-size: 26px;">VOCÊ TEM UM GRANDE POTENCIAL, MAS ESTÁ ERRANDO NO BÁSICO.</h1>
-        
-        <p class="subtitle" style="text-align: left;">
-            Sua análise indicou que você tem a intenção certa, mas trava na hora 'H' da conversa. <br><br>
-            O erro que você está cometendo é tentar ser "legal demais" ou não saber usar os gatilhos certos de conexão. Isso faz com que você seja visto apenas como amigo(a) ou ignorado(a).<br><br>
-            Mas calma. Existe um <strong>protocolo exato</strong> de mensagens que muda esse jogo instantaneamente, criado especificamente para a nossa comunidade.
+    <div class="step" id="step5">
+        <h1>VOCÊ JÁ FOI <span class="highlight">VISUALIZADO E IGNORADO</span> POR DIAS POR AQUELA MULHER QUE VOCÊ GOSTA?</h1>
+        <button class="btn" onclick="nextStep(5)">JÁ ACONTECEU</button>
+        <button class="btn btn-outline" onclick="nextStep(5)">NUNCA</button>
+    </div>
+
+    <div class="step" id="step6">
+        <h1><span class="user-name-span"></span>, VOCÊ SABIA QUE 95% DOS HOMENS SÃO <span class="highlight">BONZINHOS DEMAIS</span> E POR ISSO ACABAM NA FRIENDZONE?</h1>
+        <button class="btn" onclick="nextStep(6)">CONCORDO</button>
+        <button class="btn btn-outline" onclick="nextStep(6)">NÃO SABIA</button>
+    </div>
+
+    <div class="step" id="step7">
+        <div class="image-container">
+            <img src="https://lp.desenrolado.com.br/wp-content/uploads/2025/01/cvs-nova2.webp" class="quiz-image">
+        </div>
+        <h1>GOSTARIA DE SABER EXATAMENTE O QUE ESCREVER PARA GERAR <span class="highlight">ATRAÇÃO INSTANTÂNEA?</span></h1>
+        <button class="btn" onclick="nextStep(7)">COM CERTEZA</button>
+    </div>
+
+    <div class="step" id="step8">
+        <h1>VOCÊ SE SENTE SEGURO NA HORA DE CHAMAR UMA MULHER <span class="highlight">NOTA 10</span> PARA SAIR?</h1>
+        <button class="btn" onclick="nextStep(8)">TENHO DIFICULDADE</button>
+        <button class="btn btn-outline" onclick="nextStep(8)">SOU CONFIANTE</button>
+    </div>
+
+    <div class="step" id="step9">
+        <h1><span class="user-name-span"></span>, O QUANTO VOCÊ ESTÁ DISPOSTO A MUDAR PARA <span class="highlight">NUNCA MAIS</span> SER IGNORADO?</h1>
+        <button class="btn" onclick="nextStep(9)">100% DISPOSTO</button>
+        <button class="btn btn-outline" onclick="nextStep(9)">QUERO VER SE FUNCIONA</button>
+    </div>
+
+    <div class="step" id="step10">
+        <h1>VOCÊ ACREDITA QUE UM HOMEM COM <span class="highlight">BOA LÁBIA</span> VENCE QUALQUER "CARA DE ACADEMIA"?</h1>
+        <button class="btn" onclick="nextStep(10)">COM TODA CERTEZA</button>
+        <button class="btn btn-outline" onclick="nextStep(10)">TENHO DÚVIDAS</button>
+    </div>
+
+    <div class="step" id="step11">
+        <h1>ESTÁ PRONTO PARA SE TORNAR O HOMEM QUE <span class="highlight">ELA NÃO PARA DE PENSAR?</span></h1>
+        <button class="btn" onclick="nextStep(11)">ESTOU PRONTO!</button>
+    </div>
+
+    <div class="step" id="step12">
+        <h1>SE EU TE MOSTRAR O <span class="highlight">PROTOCOLO EXATO</span> HOJE, VOCÊ APLICARIA AGORA MESMO?</h1>
+        <button class="btn" onclick="startLoading()">SIM, ME MOSTRA!</button>
+    </div>
+
+    <div class="step" id="step-loading">
+        <h1>ANALISANDO PERFIL DE <br><span class="highlight" id="loadingName"></span>...</h1>
+        <div class="loader-bar"><div class="loader-fill" id="loaderFill"></div></div>
+        <p>Avaliando compatibilidade com o Protocolo Afroworld...</p>
+    </div>
+
+    <div class="step" id="step-result">
+        <h2 class="highlight">ANÁLISE CONCLUÍDA!</h2>
+        <h1 id="resultTitle"></h1>
+        <p style="text-align: left; line-height: 1.6; color: #ccc;">
+            <span class="user-name-span"></span>, sua idade e suas respostas indicam que você tem um potencial desperdiçado por falta de técnica. <br><br>
+            Você está cansado de ser o "cara legal" que só recebe vácuo. O problema não é você, mas as <strong>mensagens previsíveis</strong> que você envia. <br><br>
+            Liberei para você o acesso ao método que está mudando o jogo de milhares de homens da nossa comunidade.
         </p>
-        
-        <p style="font-weight: 700; margin-bottom: 20px;">Você está pronto para parar de ser ignorado?</p>
-
-        <button class="btn" id="finalButton">QUERO ACESSAR O PROTOCOLO AGORA</button>
-
-        <p style="font-size: 12px; color: #666; margin-top: 20px;">Toque no botão acima para descobrir o método.</p>
+        <button class="btn" id="finalBtn">QUERO ACESSAR O MÉTODO AGORA</button>
     </div>
 
 </div>
 
 <script>
-    let currentStep = 1;
+    let userName = "";
+    const totalSteps = 12;
 
-    // Função para avançar os passos normais
-    function nextStep(stepNumber) {
-        // Esconde o passo atual
-        document.getElementById('step' + stepNumber).classList.remove('active');
-        // Mostra o próximo passo
-        currentStep = stepNumber + 1;
-        document.getElementById('step' + currentStep).classList.add('active');
+    function updateProgressBar(step) {
+        const percent = (step / totalSteps) * 100;
+        document.getElementById('main-progress-bar').style.width = percent + "%";
     }
 
-    // Função específica para iniciar o carregamento após a última pergunta
-    function startLoading() {
-        document.getElementById('step3').classList.remove('active');
-        document.getElementById('step4-loading').classList.add('active');
-
-        // Inicia a animação da barra de progresso
-        setTimeout(() => {
-             document.getElementById('progressBar').style.width = '100%';
-        }, 100); // Pequeno delay para garantir que a transição CSS funcione
-
-        // Espera 3.5 segundos (tempo da animação) e mostra o resultado
-        setTimeout(() => {
-            document.getElementById('step4-loading').classList.remove('active');
-            document.getElementById('step5-result').classList.add('active');
-        }, 3500);
+    function nextStep(current) {
+        document.getElementById('step' + current).classList.remove('active');
+        const next = current + 1;
+        if(document.getElementById('step' + next)) {
+            document.getElementById('step' + next).classList.add('active');
+            updateProgressBar(next);
+        }
     }
 
-    // --- CONFIGURAÇÃO DO BOTÃO FINAL ---
-    const finalButton = document.getElementById('finalButton');
-    
-    finalButton.addEventListener('click', function() {
-        // --- COLOQUE AQUI O LINK DA SUA PÁGINA DE VENDAS ---
-        // Exemplo: window.location.href = 'https://afroworld.com.br/pagina-de-vendas';
-        window.location.href = '#LINK-DA-SUA-PAGINA-DE-VENDAS-AQUI'; 
+    function saveName() {
+        userName = document.getElementById('userName').value;
+        if(userName.trim() === "") { alert("Por favor, digite seu nome."); return; }
         
-        console.log("Redirecionando para a página de vendas...");
-    });
+        document.querySelectorAll('.user-name-span').forEach(el => el.innerText = userName.toUpperCase());
+        document.getElementById('loadingName').innerText = userName.toUpperCase();
+        nextStep(2);
+    }
 
+    function startLoading() {
+        document.getElementById('step12').classList.remove('active');
+        document.getElementById('step-loading').classList.add('active');
+        
+        setTimeout(() => { document.getElementById('loaderFill').style.width = "100%"; }, 100);
+
+        setTimeout(() => {
+            document.getElementById('step-loading').classList.remove('active');
+            document.getElementById('step-result').classList.add('active');
+            document.getElementById('resultTitle').innerHTML = userName.toUpperCase() + ", VOCÊ FOI <span class='highlight'>APROVADO</span> PARA O PROTOCOLO!";
+            updateProgressBar(totalSteps);
+        }, 3200);
+    }
+
+    document.getElementById('finalBtn').onclick = function() {
+        // SUBSTITUA PELO SEU LINK DA PAGINA DE VENDAS
+        window.location.href = "https://SEU-LINK-AQUI.com";
+    };
 </script>
 
 </body>
